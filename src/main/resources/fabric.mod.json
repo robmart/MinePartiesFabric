@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "mineparties",
+  "version": "${version}",
+  "name": "MineParties",
+  "description": "RPG-like parties in Minecraft",
+  "authors": [
+    "Robmart"
+  ],
+  "contact": {},
+  "license": "LGPL-3.0",
+  "icon": "assets/mineparties/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "robmart.mod.mineparties.client.MinepartiesClient"
+    ],
+    "main": [
+      "robmart.mod.mineparties.common.Mineparties"
+    ]
+  },
+  "mixins": [
+    "mineparties.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.9.2+build.206",
+    "fabric": "*",
+    "minecraft": "1.16.2",
+    "cardinal-components-base": ">=2.5.1",
+    "cardinal-components-level": ">=2.5.1",
+    "targetingapifabric": ">=0.1.1"
+  }
+}
