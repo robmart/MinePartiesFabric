@@ -1,0 +1,14 @@
+{
+
+	"_comment": "commands",
+	"commands.mineparties.party.usage": "/party <subcommand> [player]",
+	"commands.mineparties.party.inparty": "Player is already in a party",
+	"commands.mineparties.party.invite": "%s has invited you to a party. Click here to accept",
+	"commands.mineparties.party.noparty": "Player not in any party",
+	"commands.mineparties.party.success1": "Party \"%s\" has been created",
+	"commands.mineparties.party.success2": "%s has been invited to party",
+	"commands.mineparties.party.joined": "%s has joined the party",
+
+	"commands.mineparties.notification.usage": "/notification <uuid>",
+	"commands.mineparties.notification.notexist": "That notification does not exist"
+}
