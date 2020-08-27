@@ -3,9 +3,7 @@ package robmart.mod.mineparties.api.notification;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -32,43 +30,45 @@ import java.util.UUID;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class Notification {
-    private static Map<String, Notification> notificationList = Maps.newHashMap();
+    private static final Map<UUID, Notification> notificationList = Maps.newHashMap();
 
-    private String identifier;
-    private PlayerEntity playerReceiver;
-    private Text message;
+    private final UUID identifier;
+    private final PlayerEntity playerReceiver;
+    private final BaseText message;
     private boolean hasSentMessage = false;
-    private Method method;
-    private Object instance;
-    private Object[] args;
+    private final Method method;
+    private final Object instance;
+    private final Object[] args;
 
     public Notification(PlayerEntity player, String message, Method method, Object instance, Object... args) {
         this(player, new TranslatableText(message), method, instance, args);
     }
 
-    public Notification(PlayerEntity player, Text message, Method method, Object instance, Object... args) {
+    public Notification(PlayerEntity player, BaseText message, Method method, Object instance, Object... args) {
         this.playerReceiver = player;
         this.message = message;
         this.method = method;
         this.instance = instance;
         this.args = args;
 
-        String uuid = "";
-        while(uuid.equals("") || notificationList.keySet().contains(uuid)) {
-            uuid = UUID.randomUUID().toString();
+        UUID uuid = null;
+        while(uuid == null || uuid.toString().equals("") || notificationList.containsKey(uuid)) {
+            uuid = UUID.randomUUID();
         }
         this.identifier = uuid;
 
         notificationList.put(this.identifier, this);
     }
 
-    public static Map<String, Notification> getNotificationList() {
+    public static Map<UUID, Notification> getNotificationList() {
         return ImmutableMap.copyOf(notificationList);
     }
 
     public void sendMessage() {
-        message.getStyle().withBold(true).withClickEvent(
-                new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/notification " + getIdentifier()));
+        System.out.println(getIdentifier().toString());
+
+        message.setStyle(message.getStyle().withBold(true).withClickEvent(
+                new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/notification " + getIdentifier().toString())));
 
         playerReceiver.sendMessage(message, false);
         this.hasSentMessage = true;
@@ -79,7 +79,7 @@ public class Notification {
         notificationList.remove(this.identifier);
     }
 
-    public String getIdentifier() {
+    public UUID getIdentifier() {
         return this.identifier;
     }
 

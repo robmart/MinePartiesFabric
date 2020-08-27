@@ -13,10 +13,10 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "robmart.mod.mineparties.client.MinepartiesClient"
+      "robmart.mod.mineparties.client.MinePartiesClient"
     ],
     "main": [
-      "robmart.mod.mineparties.common.Mineparties"
+      "robmart.mod.mineparties.common.MineParties"
     ]
   },
   "mixins": [
@@ -25,9 +25,9 @@
   "depends": {
     "fabricloader": ">=0.9.2+build.206",
     "fabric": "*",
-    "minecraft": "1.16.2",
+    "minecraft": "1.16.x",
     "cardinal-components-base": ">=2.5.1",
     "cardinal-components-level": ">=2.5.1",
-    "targetingapifabric": ">=0.1.1"
+    "targetingapifabric": "0.1.2a"
   }
 }

@@ -5,7 +5,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public class MinepartiesClient implements ClientModInitializer {
+public class MinePartiesClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
 
