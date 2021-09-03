@@ -30,7 +30,7 @@ import java.util.UUID;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class Notification {
-    private static final Map<UUID, Notification> notificationList = Maps.newHashMap();
+    protected static final Map<UUID, Notification> notificationList = Maps.newHashMap();
 
     private final UUID identifier;
     private final PlayerEntity playerReceiver;
