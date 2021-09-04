@@ -19,11 +19,15 @@ import java.lang.annotation.Target;
 public class PartyScreen extends Screen {
     private static final Identifier TEXTURE = new Identifier("mineparties:textures/gui/party.png");
     private static final Identifier ADD_BUTTON_TEXTURE = new Identifier("mineparties:textures/gui/plus_button.png");
+    private static final Identifier MINUS_BUTTON_TEXTURE = new Identifier("mineparties:textures/gui/minus_button.png");
+    private static final Identifier EDIT_BUTTON_TEXTURE = new Identifier("mineparties:textures/gui/edit_button.png");
     private static final int TEXTURE_HEIGHT = 166;
     private static final int TEXTURE_WIDTH = 176;
 
     private TextFieldWidget partyNameWidget;
     private TexturedButtonWidget partyCreateWidget;
+    private TexturedButtonWidget partyLeaveWidget;
+    private TexturedButtonWidget partyEditWidget;
 
     private FactionParty party;
 
@@ -45,6 +49,16 @@ public class PartyScreen extends Screen {
         } else if (!partyNameWidget.getText().equals("") && party == null) {
             client.player.sendChatMessage("/party create " + partyNameWidget.getText());
         }
+
+        partyNameWidget.setText("");
+    }
+
+    public void leaveParty(){
+
+    }
+
+    public void editName(){
+
     }
 
     @Override
@@ -53,23 +67,41 @@ public class PartyScreen extends Screen {
 
         partyNameWidget = new TextFieldWidget(this.textRenderer, this.width / 2 - 80, this.height / 2 - 75,
                 TEXTURE_WIDTH / 2 - 10, 15, new TranslatableText("mineparties.name"));
+
         partyCreateWidget = new TexturedButtonWidget(this.width / 2 + 60, this.height / 2 - 77, 20, 18, 0, 0, 19, ADD_BUTTON_TEXTURE, (button) -> createParty());
+        partyLeaveWidget = new TexturedButtonWidget(this.width / 2 + 60, this.height / 2 - 77, 20, 18, 0, 0, 19, MINUS_BUTTON_TEXTURE, (button) -> leaveParty());
+        partyEditWidget = new TexturedButtonWidget(this.width / 2 + 38, this.height / 2 - 77, 20, 18, 0, 0, 19, EDIT_BUTTON_TEXTURE, (button) -> editName());
+
         addSelectableChild(partyNameWidget);
+
         addSelectableChild(partyCreateWidget);
+        addSelectableChild(partyLeaveWidget);
+        addSelectableChild(partyEditWidget);
     }
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         this.renderBackground(matrices);
 
+        partyNameWidget.render(matrices, mouseX, mouseY, delta);
+
         if (party == null) {
-            partyNameWidget.render(matrices, mouseX, mouseY, delta);
+            partyNameWidget.y = this.height / 2 - 77;
+
             partyCreateWidget.render(matrices, mouseX, mouseY, delta);
 
             loadParty();
         } else {
-            textRenderer.draw(matrices, party.getName(), this.width / 2 - 80, this.height / 2 - 75, 0);
+            partyNameWidget.y = this.height / 2 - 57;
+
+            textRenderer.draw(matrices, party.getName(), this.width / 2 - 78, this.height / 2 - 75, 0);
+
+            partyLeaveWidget.render(matrices, mouseX, mouseY, delta);
+            partyEditWidget.render(matrices, mouseX, mouseY, delta);
         }
+
+        textRenderer.draw(matrices, new TranslatableText("mineparties.gui.party.members"), this.width / 2 - 78, this.height / 2 - 30, 0);
+        textRenderer.draw(matrices, new TranslatableText("mineparties.gui.party.settings"), this.width / 2 + 10, this.height / 2 - 30, 0);
     }
 
     @Override

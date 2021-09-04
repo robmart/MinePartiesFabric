@@ -10,5 +10,9 @@
 	"commands.mineparties.party.joined": "%s has joined the party",
 
 	"commands.mineparties.notification.usage": "/notification <uuid>",
-	"commands.mineparties.notification.notexist": "That notification does not exist"
+	"commands.mineparties.notification.notexist": "That notification does not exist",
+
+	"_comment": "gui",
+	"mineparties.gui.party.members": "Members:",
+	"mineparties.gui.party.settings": "Settings:"
 }
