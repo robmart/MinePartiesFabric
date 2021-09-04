@@ -14,5 +14,6 @@
 
 	"_comment": "gui",
 	"mineparties.gui.party.members": "Members:",
-	"mineparties.gui.party.settings": "Settings:"
+	"mineparties.gui.party.settings": "Settings:",
+	"mineparties.gui.party.name": "Name"
 }

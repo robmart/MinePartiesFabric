@@ -58,7 +58,8 @@ public class PartyScreen extends Screen {
     }
 
     public void editName(){
-
+        if (!partyNameWidget.getText().equals(""))
+            party.setName(partyNameWidget.getText());
     }
 
     @Override
@@ -66,7 +67,7 @@ public class PartyScreen extends Screen {
         loadParty();
 
         partyNameWidget = new TextFieldWidget(this.textRenderer, this.width / 2 - 80, this.height / 2 - 75,
-                TEXTURE_WIDTH / 2 - 10, 15, new TranslatableText("mineparties.name"));
+                TEXTURE_WIDTH / 2 - 10, 15, new TranslatableText("mineparties.gui.party.name"));
 
         partyCreateWidget = new TexturedButtonWidget(this.width / 2 + 60, this.height / 2 - 77, 20, 18, 0, 0, 19, ADD_BUTTON_TEXTURE, (button) -> createParty());
         partyLeaveWidget = new TexturedButtonWidget(this.width / 2 + 60, this.height / 2 - 77, 20, 18, 0, 0, 19, MINUS_BUTTON_TEXTURE, (button) -> leaveParty());

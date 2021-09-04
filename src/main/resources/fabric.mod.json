@@ -28,6 +28,6 @@
     "minecraft": "1.17.x",
     "cardinal-components-base": ">=3.1.1",
     "cardinal-components-level": ">=3.1.1",
-    "targetingapifabric": ">=0.1.4"
+    "targetingapifabric": ">=0.1.5"
   }
 }
