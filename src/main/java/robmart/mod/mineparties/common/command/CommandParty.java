@@ -26,12 +26,14 @@ public class CommandParty {
                         .then(CommandManager.literal("create")
                                 .executes(ctx -> createParty(ctx.getSource()))
                                 .then(CommandManager.argument("name", MessageArgumentType.message())
-                                .executes(ctx -> createParty(ctx.getSource(), MessageArgumentType.getMessage(ctx, "name")))
+                                        .executes(ctx -> createParty(ctx.getSource(), MessageArgumentType.getMessage(ctx, "name")))
                         )).then(CommandManager.literal("list")
                                 .executes(ctx -> listMembers(ctx.getSource()))
-                    ).then(CommandManager.literal("invite")
-                        .then(CommandManager.argument("player", EntityArgumentType.players())
-                                .executes(ctx -> invite(ctx.getSource(), EntityArgumentType.getPlayer(ctx, "player")))))
+                        ).then(CommandManager.literal("invite")
+                            .then(CommandManager.argument("player", EntityArgumentType.players())
+                                .executes(ctx -> invite(ctx.getSource(), EntityArgumentType.getPlayer(ctx, "player"))))
+                        ).then(CommandManager.literal("leave")
+                                .executes(ctx -> leaveParty(ctx.getSource())))
 
         );
     }
@@ -106,6 +108,31 @@ public class CommandParty {
             e.printStackTrace();
         }
         notification.sendMessage();
+        return 1;
+    }
+
+    public static int leaveParty(ServerCommandSource source) {
+        AtomicReference<FactionParty> party = new AtomicReference<>();
+        Targeting.getFactionsFromEntity(source.getEntity()).forEach(faction -> {
+            if (faction instanceof FactionParty)
+                party.set((FactionParty) faction);
+        });
+
+        if (party.get() == null || !party.get().isMember(source.getEntity())) {
+            source.sendError(new TranslatableText("commands.mineparties.party.noparty"));
+            return 0;
+        }
+
+        try {
+            party.get().removeMemberEntity(source.getEntity());
+
+            if (party.get().getAllMembers().size() < 1) {
+                Targeting.disbandFaction(party.get());
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
         return 1;
     }
 }

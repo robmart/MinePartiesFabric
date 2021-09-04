@@ -14,8 +14,6 @@ import robmart.mod.mineparties.api.faction.FactionParty;
 import robmart.mod.targetingapifabric.api.Targeting;
 import robmart.mod.targetingapifabric.api.faction.Faction;
 
-import java.lang.annotation.Target;
-
 public class PartyScreen extends Screen {
     private static final Identifier TEXTURE = new Identifier("mineparties:textures/gui/party.png");
     private static final Identifier ADD_BUTTON_TEXTURE = new Identifier("mineparties:textures/gui/plus_button.png");
@@ -30,6 +28,7 @@ public class PartyScreen extends Screen {
     private TexturedButtonWidget partyEditWidget;
 
     private FactionParty party;
+    private int counter = 0;
 
     public PartyScreen() {
         super(Text.of("Party"));
@@ -39,6 +38,7 @@ public class PartyScreen extends Screen {
         for (Faction faction : Targeting.getFactionsFromEntity(client.player)) {
             if (faction instanceof FactionParty) {
                 party = (FactionParty) faction;
+                return;
             }
         }
     }
@@ -54,12 +54,15 @@ public class PartyScreen extends Screen {
     }
 
     public void leaveParty(){
-
+        client.player.sendChatMessage("/party leave");
+        party = null;
     }
 
     public void editName(){
-        if (!partyNameWidget.getText().equals(""))
+        if (!partyNameWidget.getText().equals("")) {
             party.setName(partyNameWidget.getText());
+            partyNameWidget.setText("");
+        }
     }
 
     @Override
@@ -70,14 +73,14 @@ public class PartyScreen extends Screen {
                 TEXTURE_WIDTH / 2 - 10, 15, new TranslatableText("mineparties.gui.party.name"));
 
         partyCreateWidget = new TexturedButtonWidget(this.width / 2 + 60, this.height / 2 - 77, 20, 18, 0, 0, 19, ADD_BUTTON_TEXTURE, (button) -> createParty());
-        partyLeaveWidget = new TexturedButtonWidget(this.width / 2 + 60, this.height / 2 - 77, 20, 18, 0, 0, 19, MINUS_BUTTON_TEXTURE, (button) -> leaveParty());
         partyEditWidget = new TexturedButtonWidget(this.width / 2 + 38, this.height / 2 - 77, 20, 18, 0, 0, 19, EDIT_BUTTON_TEXTURE, (button) -> editName());
+        partyLeaveWidget = new TexturedButtonWidget(this.width / 2 + 60, this.height / 2 - 77, 20, 18, 0, 0, 19, MINUS_BUTTON_TEXTURE, (button) -> leaveParty());
 
         addSelectableChild(partyNameWidget);
 
         addSelectableChild(partyCreateWidget);
-        addSelectableChild(partyLeaveWidget);
         addSelectableChild(partyEditWidget);
+        addSelectableChild(partyLeaveWidget);
     }
 
     @Override
@@ -87,18 +90,24 @@ public class PartyScreen extends Screen {
         partyNameWidget.render(matrices, mouseX, mouseY, delta);
 
         if (party == null) {
-            partyNameWidget.y = this.height / 2 - 77;
+            partyLeaveWidget.active = false;
+            partyCreateWidget.active = true;
+
+            partyNameWidget.y = this.height / 2 - 75;
 
             partyCreateWidget.render(matrices, mouseX, mouseY, delta);
 
             loadParty();
         } else {
+            partyLeaveWidget.active = true;
+            partyCreateWidget.active = false;
+
             partyNameWidget.y = this.height / 2 - 57;
 
             textRenderer.draw(matrices, party.getName(), this.width / 2 - 78, this.height / 2 - 72, 0);
 
-            partyLeaveWidget.render(matrices, mouseX, mouseY, delta);
             partyEditWidget.render(matrices, mouseX, mouseY, delta);
+            partyLeaveWidget.render(matrices, mouseX, mouseY, delta);
         }
 
         textRenderer.draw(matrices, new TranslatableText("mineparties.gui.party.members"), this.width / 2 - 78, this.height / 2 - 30, 0);
