@@ -101,7 +101,7 @@ public class PartyScreen extends Screen {
         }
 
         textRenderer.draw(matrices, new TranslatableText("mineparties.gui.party.members"), this.width / 2 - 78, this.height / 2 - 30, 0);
-        textRenderer.draw(matrices, new TranslatableText("mineparties.gui.party.settings"), this.width / 2 + 10, this.height / 2 - 30, 0);
+        textRenderer.draw(matrices, new TranslatableText("mineparties.gui.party.settings"), this.width / 2 + 3, this.height / 2 - 30, 0);
     }
 
     @Override
