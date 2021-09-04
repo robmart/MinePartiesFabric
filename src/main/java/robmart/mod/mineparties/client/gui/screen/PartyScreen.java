@@ -94,7 +94,7 @@ public class PartyScreen extends Screen {
         } else {
             partyNameWidget.y = this.height / 2 - 57;
 
-            textRenderer.draw(matrices, party.getName(), this.width / 2 - 78, this.height / 2 - 75, 0);
+            textRenderer.draw(matrices, party.getName(), this.width / 2 - 78, this.height / 2 - 72, 0);
 
             partyLeaveWidget.render(matrices, mouseX, mouseY, delta);
             partyEditWidget.render(matrices, mouseX, mouseY, delta);
