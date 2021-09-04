@@ -46,7 +46,7 @@ dependencies {
     modApi "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:3.1.1"
     modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-level:3.1.1"
 
-    modImplementation "curse.maven:targetingapi-403888:3448792"
+    modImplementation "curse.maven:targetingapi-403888:3449015"
     //modImplementation files('libs/TargetingAPIFabric-0.1.4.jar')
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
