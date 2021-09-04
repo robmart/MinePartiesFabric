@@ -2,7 +2,9 @@ package robmart.mod.mineparties.client.gui.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -12,12 +14,17 @@ import robmart.mod.mineparties.api.faction.FactionParty;
 import robmart.mod.targetingapifabric.api.Targeting;
 import robmart.mod.targetingapifabric.api.faction.Faction;
 
+import java.lang.annotation.Target;
+
 public class PartyScreen extends Screen {
     private static final Identifier TEXTURE = new Identifier("mineparties:textures/gui/party.png");
+    private static final Identifier ADD_BUTTON_TEXTURE = new Identifier("mineparties:textures/gui/plus_button.png");
     private static final int TEXTURE_HEIGHT = 166;
     private static final int TEXTURE_WIDTH = 176;
 
     private TextFieldWidget partyNameWidget;
+    private TexturedButtonWidget partyCreateWidget;
+
     private FactionParty party;
 
     public PartyScreen() {
@@ -32,13 +39,23 @@ public class PartyScreen extends Screen {
         }
     }
 
+    public void createParty(){
+        if (partyNameWidget.getText().equals("") && party == null) {
+            client.player.sendChatMessage("/party create");
+        } else if (!partyNameWidget.getText().equals("") && party == null) {
+            client.player.sendChatMessage("/party create " + partyNameWidget.getText());
+        }
+    }
+
     @Override
     protected void init() {
         loadParty();
 
         partyNameWidget = new TextFieldWidget(this.textRenderer, this.width / 2 - 80, this.height / 2 - 75,
                 TEXTURE_WIDTH / 2 - 10, 15, new TranslatableText("mineparties.name"));
+        partyCreateWidget = new TexturedButtonWidget(this.width / 2 + 60, this.height / 2 - 77, 20, 18, 0, 0, 19, ADD_BUTTON_TEXTURE, (button) -> createParty());
         addSelectableChild(partyNameWidget);
+        addSelectableChild(partyCreateWidget);
     }
 
     @Override
@@ -47,6 +64,9 @@ public class PartyScreen extends Screen {
 
         if (party == null) {
             partyNameWidget.render(matrices, mouseX, mouseY, delta);
+            partyCreateWidget.render(matrices, mouseX, mouseY, delta);
+
+            loadParty();
         } else {
             textRenderer.draw(matrices, party.getName(), this.width / 2 - 80, this.height / 2 - 75, 0);
         }
