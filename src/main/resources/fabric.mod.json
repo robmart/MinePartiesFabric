@@ -23,11 +23,11 @@
     "mineparties.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.11.6",
+    "fabricloader": ">=0.14.14",
     "fabric": "*",
-    "minecraft": "1.17.x",
-    "cardinal-components-base": ">=3.1.1",
-    "cardinal-components-level": ">=3.1.1",
-    "targetingapifabric": "0.1.5a"
+    "minecraft": "1.19.3",
+    "cardinal-components-base": ">=5.1.0",
+    "cardinal-components-level": ">=5.1.0",
+    "targetingapifabric": "0.1.6"
   }
 }

@@ -5,7 +5,8 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.TranslatableTextContent;
 import robmart.mod.mineparties.api.notification.Notification;
 
 import java.lang.reflect.InvocationTargetException;
@@ -23,7 +24,7 @@ public class CommandNotification {
     private static int execute(ServerCommandSource source, UUID id) {
         Notification notification = Notification.getNotificationList().get(id);
         if (notification == null)
-            throw new CommandException(new TranslatableText("commands.mineparties.notification.notexist"));
+            throw new CommandException(MutableText.of(new TranslatableTextContent("commands.mineparties.notification.notexist")));
         try {
             notification.execute();
         } catch (InvocationTargetException | IllegalAccessException e) {

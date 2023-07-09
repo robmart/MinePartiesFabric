@@ -1,14 +1,17 @@
 package robmart.mod.mineparties.client.gui.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
+import net.minecraft.text.LiteralTextContent;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Identifier;
 import robmart.mod.mineparties.api.faction.FactionParty;
 import robmart.mod.targetingapifabric.api.Targeting;
@@ -38,6 +41,11 @@ public class PartyScreen extends Screen {
         for (Faction faction : Targeting.getFactionsFromEntity(client.player)) {
             if (faction instanceof FactionParty) {
                 party = (FactionParty) faction;
+                for (Object object : party.getAllMembers()) {
+                    if (object instanceof Entity entity) {
+                        System.out.println(entity.getName());
+                    }
+                }
                 return;
             }
         }
@@ -45,16 +53,17 @@ public class PartyScreen extends Screen {
 
     public void createParty(){
         if (partyNameWidget.getText().equals("") && party == null) {
-            client.player.sendChatMessage("/party create");
+            MinecraftClient.getInstance().getNetworkHandler().sendChatCommand("party create");
         } else if (!partyNameWidget.getText().equals("") && party == null) {
-            client.player.sendChatMessage("/party create " + partyNameWidget.getText());
+            System.out.println(partyNameWidget.getText());
+            MinecraftClient.getInstance().getNetworkHandler().sendChatCommand("party create " + partyNameWidget.getText());
         }
 
         partyNameWidget.setText("");
     }
 
     public void leaveParty(){
-        client.player.sendChatMessage("/party leave");
+        MinecraftClient.getInstance().getNetworkHandler().sendChatCommand("party leave");
         party = null;
     }
 
@@ -70,7 +79,7 @@ public class PartyScreen extends Screen {
         loadParty();
 
         partyNameWidget = new TextFieldWidget(this.textRenderer, this.width / 2 - 80, this.height / 2 - 75,
-                TEXTURE_WIDTH / 2 - 10, 15, new TranslatableText("mineparties.gui.party.name"));
+                TEXTURE_WIDTH / 2 - 10, 15, MutableText.of(new TranslatableTextContent("mineparties.gui.party.name")));
 
         partyCreateWidget = new TexturedButtonWidget(this.width / 2 + 60, this.height / 2 - 77, 20, 18, 0, 0, 19, ADD_BUTTON_TEXTURE, (button) -> createParty());
         partyEditWidget = new TexturedButtonWidget(this.width / 2 + 38, this.height / 2 - 77, 20, 18, 0, 0, 19, EDIT_BUTTON_TEXTURE, (button) -> editName());
@@ -93,7 +102,7 @@ public class PartyScreen extends Screen {
             partyLeaveWidget.active = false;
             partyCreateWidget.active = true;
 
-            partyNameWidget.y = this.height / 2 - 75;
+            partyNameWidget.setY(this.height / 2 - 75);
 
             partyCreateWidget.render(matrices, mouseX, mouseY, delta);
 
@@ -102,7 +111,7 @@ public class PartyScreen extends Screen {
             partyLeaveWidget.active = true;
             partyCreateWidget.active = false;
 
-            partyNameWidget.y = this.height / 2 - 57;
+            partyNameWidget.setY(this.height / 2 - 57);
 
             textRenderer.draw(matrices, party.getName(), this.width / 2 - 78, this.height / 2 - 72, 0);
 
@@ -110,14 +119,14 @@ public class PartyScreen extends Screen {
             partyLeaveWidget.render(matrices, mouseX, mouseY, delta);
         }
 
-        textRenderer.draw(matrices, new TranslatableText("mineparties.gui.party.members"), this.width / 2 - 78, this.height / 2 - 30, 0);
-        textRenderer.draw(matrices, new TranslatableText("mineparties.gui.party.settings"), this.width / 2 + 3, this.height / 2 - 30, 0);
+        textRenderer.draw(matrices, MutableText.of(new TranslatableTextContent("mineparties.gui.party.members")), this.width / 2 - 78, this.height / 2 - 30, 0);
+        textRenderer.draw(matrices, MutableText.of(new TranslatableTextContent("mineparties.gui.party.settings")), this.width / 2 + 3, this.height / 2 - 30, 0);
     }
 
     @Override
     public void renderBackground(MatrixStack matrices) {
         super.renderBackground(matrices);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
 
@@ -127,7 +136,7 @@ public class PartyScreen extends Screen {
     }
 
     @Override
-    public boolean isPauseScreen() {
+    public boolean shouldPause() {
         return false;
     }
 }

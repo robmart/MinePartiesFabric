@@ -1,16 +1,15 @@
 package robmart.mod.mineparties.common.command;
 
-import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.MessageArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslatableTextContent;
 import robmart.mod.mineparties.api.faction.FactionParty;
 import robmart.mod.mineparties.api.notification.Notification;
 import robmart.mod.targetingapifabric.api.Targeting;
@@ -41,7 +40,7 @@ public class CommandParty {
     private static int createParty(ServerCommandSource source){
         for (Faction faction : Targeting.getFactionsFromEntity(source.getEntity())) {
             if (faction instanceof FactionParty) {
-                source.sendError(new TranslatableText("commands.mineparties.party.inparty"));
+                source.sendError(MutableText.of(new TranslatableTextContent("commands.mineparties.party.inparty")));
                 return 0;
             }
         }
@@ -50,23 +49,23 @@ public class CommandParty {
         party.addMemberEntity(source.getEntity());
         Targeting.registerFaction(party);
 
-        source.sendFeedback(new TranslatableText("commands.mineparties.party.success1", party.getName()), true);
+        source.sendFeedback(MutableText.of(new TranslatableTextContent("commands.mineparties.party.success1", party.getName())), true);
         return 1;
     }
 
     private static int createParty(ServerCommandSource source, Text name){
         for (Faction faction : Targeting.getFactionsFromEntity(source.getEntity())) {
             if (faction instanceof FactionParty) {
-                source.sendError(new TranslatableText("commands.mineparties.party.inparty"));
+                source.sendError(MutableText.of(new TranslatableTextContent("commands.mineparties.party.inparty")));
                 return 0;
             }
         }
 
-        FactionParty party = new FactionParty(name.asString());
+        FactionParty party = new FactionParty(name.getString());
         party.addMemberEntity(source.getEntity());
         Targeting.registerFaction(party);
 
-        source.sendFeedback(new TranslatableText("commands.mineparties.party.success1", party.getName()), true);
+        source.sendFeedback(MutableText.of(new TranslatableTextContent("commands.mineparties.party.success1", party.getName())), true);
         return 1;
     }
 
@@ -83,7 +82,7 @@ public class CommandParty {
         });
 
         if (returnint.get() < 1)
-            source.sendError(new TranslatableText("commands.mineparties.party.noparty"));
+            source.sendError(MutableText.of(new TranslatableTextContent("commands.mineparties.party.noparty")));
         return returnint.get();
     }
 
@@ -95,14 +94,14 @@ public class CommandParty {
         });
 
         if (party.get() == null) {
-            source.sendError(new TranslatableText("commands.mineparties.party.noparty"));
+            source.sendError(MutableText.of(new TranslatableTextContent("commands.mineparties.party.noparty")));
             return 0;
         }
 
         Notification notification = null;
         try {
-            notification = new Notification(entity, new TranslatableText("commands.mineparties.party.invite",
-                    source.getEntity().getName()), Faction.class.getMethod("addMemberEntity", Entity.class), party.get(),
+            notification = new Notification(entity, MutableText.of(new TranslatableTextContent("commands.mineparties.party.invite",
+                    source.getEntity().getName())), Faction.class.getMethod("addMemberEntity", Entity.class), party.get(),
                     entity);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -119,7 +118,7 @@ public class CommandParty {
         });
 
         if (party.get() == null || !party.get().isMember(source.getEntity())) {
-            source.sendError(new TranslatableText("commands.mineparties.party.noparty"));
+            source.sendError(MutableText.of(new TranslatableTextContent("commands.mineparties.party.noparty")));
             return 0;
         }
 
