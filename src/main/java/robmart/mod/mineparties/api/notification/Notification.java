@@ -34,17 +34,17 @@ public class Notification {
 
     private final UUID identifier;
     private final PlayerEntity playerReceiver;
-    private final BaseText message;
+    private final MutableText message;
     private boolean hasSentMessage = false;
     private final Method method;
     private final Object instance;
     private final Object[] args;
 
     public Notification(PlayerEntity player, String message, Method method, Object instance, Object... args) {
-        this(player, new TranslatableText(message), method, instance, args);
+        this(player, MutableText.of(new LiteralTextContent(message)), method, instance, args);
     }
 
-    public Notification(PlayerEntity player, BaseText message, Method method, Object instance, Object... args) {
+    public Notification(PlayerEntity player, MutableText message, Method method, Object instance, Object... args) {
         this.playerReceiver = player;
         this.message = message;
         this.method = method;
