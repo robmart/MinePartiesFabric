@@ -8,12 +8,14 @@ import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Identifier;
 import robmart.mod.mineparties.api.faction.FactionParty;
+import robmart.mod.mineparties.common.networking.PartyInfo;
 import robmart.mod.targetingapifabric.api.Targeting;
 import robmart.mod.targetingapifabric.api.faction.Faction;
 
@@ -25,36 +27,30 @@ public class PartyScreen extends Screen {
     private static final int TEXTURE_HEIGHT = 166;
     private static final int TEXTURE_WIDTH = 176;
 
+    public static PartyInfo partyInfo;
+
     private TextFieldWidget partyNameWidget;
     private TexturedButtonWidget partyCreateWidget;
     private TexturedButtonWidget partyLeaveWidget;
     private TexturedButtonWidget partyEditWidget;
 
-    private FactionParty party;
     private int counter = 0;
 
     public PartyScreen() {
         super(Text.of("Party"));
     }
 
-    public void loadParty() {
-        for (Faction faction : Targeting.getFactionsFromEntity(client.player)) {
-            if (faction instanceof FactionParty) {
-                party = (FactionParty) faction;
-                for (Object object : party.getAllMembers()) {
-                    if (object instanceof Entity entity) {
-                        System.out.println(entity.getName());
-                    }
-                }
-                return;
-            }
-        }
-    }
+//    public void loadParty() {
+//        if (partyInfo != null)
+//            for (PartyInfo.PartyInfoPart infoPart : partyInfo.partyInfoParts) {
+//                System.out.println(infoPart.playerId);
+//            }
+//    }
 
     public void createParty(){
-        if (partyNameWidget.getText().equals("") && party == null) {
+        if (partyNameWidget.getText().equals("") && partyInfo == null) {
             MinecraftClient.getInstance().getNetworkHandler().sendChatCommand("party create");
-        } else if (!partyNameWidget.getText().equals("") && party == null) {
+        } else if (!partyNameWidget.getText().equals("") && partyInfo == null) {
             System.out.println(partyNameWidget.getText());
             MinecraftClient.getInstance().getNetworkHandler().sendChatCommand("party create " + partyNameWidget.getText());
         }
@@ -64,20 +60,18 @@ public class PartyScreen extends Screen {
 
     public void leaveParty(){
         MinecraftClient.getInstance().getNetworkHandler().sendChatCommand("party leave");
-        party = null;
+        partyInfo = null;
     }
 
     public void editName(){
         if (!partyNameWidget.getText().equals("")) {
-            party.setName(partyNameWidget.getText());
+            //party.setName(partyNameWidget.getText()); TODO
             partyNameWidget.setText("");
         }
     }
 
     @Override
     protected void init() {
-        loadParty();
-
         partyNameWidget = new TextFieldWidget(this.textRenderer, this.width / 2 - 80, this.height / 2 - 75,
                 TEXTURE_WIDTH / 2 - 10, 15, MutableText.of(new TranslatableTextContent("mineparties.gui.party.name")));
 
@@ -98,22 +92,20 @@ public class PartyScreen extends Screen {
 
         partyNameWidget.render(matrices, mouseX, mouseY, delta);
 
-        if (party == null) {
+        if (partyInfo == null) {
             partyLeaveWidget.active = false;
             partyCreateWidget.active = true;
 
             partyNameWidget.setY(this.height / 2 - 75);
 
             partyCreateWidget.render(matrices, mouseX, mouseY, delta);
-
-            loadParty();
         } else {
             partyLeaveWidget.active = true;
             partyCreateWidget.active = false;
 
             partyNameWidget.setY(this.height / 2 - 57);
 
-            textRenderer.draw(matrices, party.getName(), this.width / 2 - 78, this.height / 2 - 72, 0);
+            textRenderer.draw(matrices, partyInfo.Name, this.width / 2 - 78, this.height / 2 - 72, 0);
 
             partyEditWidget.render(matrices, mouseX, mouseY, delta);
             partyLeaveWidget.render(matrices, mouseX, mouseY, delta);
