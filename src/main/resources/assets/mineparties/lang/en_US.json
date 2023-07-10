@@ -8,6 +8,8 @@
 	"commands.mineparties.party.success1": "Party \"%s\" has been created",
 	"commands.mineparties.party.success2": "%s has been invited to party",
 	"commands.mineparties.party.joined": "%s has joined the party",
+	"commands.mineparties.party.left": "%s has left the party",
+	"commands.mineparties.party.name": "Party name has been set to %s",
 
 	"commands.mineparties.notification.usage": "/notification <uuid>",
 	"commands.mineparties.notification.notexist": "That notification does not exist",

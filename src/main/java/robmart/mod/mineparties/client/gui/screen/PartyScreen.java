@@ -65,18 +65,25 @@ public class PartyScreen extends Screen {
 
     public void editName(){
         if (!partyNameWidget.getText().equals("")) {
-            //party.setName(partyNameWidget.getText()); TODO
+            MinecraftClient.getInstance().getNetworkHandler().sendChatCommand("party name " + partyNameWidget.getText());
             partyNameWidget.setText("");
         }
     }
 
     @Override
     protected void init() {
-        partyNameWidget = new TextFieldWidget(this.textRenderer, this.width / 2 - 80, this.height / 2 - 75,
+        partyNameWidget = new TextFieldWidget(this.textRenderer, this.width / 2 - 80, this.height / 2 - 73,
                 TEXTURE_WIDTH / 2 - 10, 15, MutableText.of(new TranslatableTextContent("mineparties.gui.party.name")));
 
-        partyCreateWidget = new TexturedButtonWidget(this.width / 2 + 60, this.height / 2 - 77, 20, 18, 0, 0, 19, ADD_BUTTON_TEXTURE, (button) -> createParty());
-        partyEditWidget = new TexturedButtonWidget(this.width / 2 + 38, this.height / 2 - 77, 20, 18, 0, 0, 19, EDIT_BUTTON_TEXTURE, (button) -> editName());
+        partyCreateWidget = new TexturedButtonWidget(this.width / 2 + 60, this.height / 2 - 77, 20, 18, 0, 0, 19, ADD_BUTTON_TEXTURE, (button) ->
+        {
+            if (partyInfo == null) {
+                createParty();
+            } else {
+                System.out.println("add"); //TODO
+            }
+        });
+        partyEditWidget = new TexturedButtonWidget(this.width / 2 + 38, this.height / 2 - 57, 20, 18, 0, 0, 19, EDIT_BUTTON_TEXTURE, (button) -> editName());
         partyLeaveWidget = new TexturedButtonWidget(this.width / 2 + 60, this.height / 2 - 77, 20, 18, 0, 0, 19, MINUS_BUTTON_TEXTURE, (button) -> leaveParty());
 
         addSelectableChild(partyNameWidget);
@@ -94,22 +101,22 @@ public class PartyScreen extends Screen {
 
         if (partyInfo == null) {
             partyLeaveWidget.active = false;
-            partyCreateWidget.active = true;
 
             partyNameWidget.setY(this.height / 2 - 75);
-
-            partyCreateWidget.render(matrices, mouseX, mouseY, delta);
+            partyCreateWidget.setY(this.height / 2 - 77);
         } else {
             partyLeaveWidget.active = true;
-            partyCreateWidget.active = false;
 
-            partyNameWidget.setY(this.height / 2 - 57);
+            partyNameWidget.setY(this.height / 2 - 55);
+            partyCreateWidget.setY(this.height / 2 - 57);
 
             textRenderer.draw(matrices, partyInfo.Name, this.width / 2 - 78, this.height / 2 - 72, 0);
 
             partyEditWidget.render(matrices, mouseX, mouseY, delta);
             partyLeaveWidget.render(matrices, mouseX, mouseY, delta);
         }
+
+        partyCreateWidget.render(matrices, mouseX, mouseY, delta);
 
         textRenderer.draw(matrices, MutableText.of(new TranslatableTextContent("mineparties.gui.party.members")), this.width / 2 - 78, this.height / 2 - 30, 0);
         textRenderer.draw(matrices, MutableText.of(new TranslatableTextContent("mineparties.gui.party.settings")), this.width / 2 + 3, this.height / 2 - 30, 0);

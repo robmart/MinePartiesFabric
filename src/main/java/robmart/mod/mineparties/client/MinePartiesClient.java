@@ -12,6 +12,7 @@ import org.lwjgl.glfw.GLFW;
 import robmart.mod.mineparties.api.reference.Reference;
 import robmart.mod.mineparties.client.gui.screen.PartyScreen;
 import robmart.mod.mineparties.common.networking.PartyInfo;
+import robmart.mod.mineparties.common.networking.PartyPlayerRemoved;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,10 @@ public class MinePartiesClient implements ClientModInitializer {
 
                 PartyScreen.partyInfo = partyInfo;
             });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(PartyPlayerRemoved.PARTY_PLAYER_REMOVED_PACKET_ID, (client, handler, buf, responseSender) -> {
+            PartyScreen.partyInfo = null;
         });
     }
 }

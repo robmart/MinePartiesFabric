@@ -1,13 +1,16 @@
 package robmart.mod.mineparties.api.faction;
 
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.TranslatableTextContent;
 import robmart.mod.mineparties.common.networking.PartyInfo;
+import robmart.mod.mineparties.common.networking.PartyPlayerRemoved;
 import robmart.mod.targetingapifabric.api.faction.Faction;
 
 import java.util.ArrayList;
@@ -44,6 +47,10 @@ public class FactionParty extends Faction {
 
     @Override
     public void removeMemberEntity(Entity entityToRemove) {
+        if (entityToRemove instanceof ServerPlayerEntity player) {
+            SendRemoved(player);
+        }
+
         super.removeMemberEntity(entityToRemove);
 
         SendPartyInfo();
@@ -51,6 +58,11 @@ public class FactionParty extends Faction {
 
     @Override
     public void clearMembers() {
+        for (PlayerEntity player : getAllPlayers()) {
+            if (player instanceof ServerPlayerEntity sPlayer)
+                SendRemoved(sPlayer);
+        }
+
         super.clearMembers();
 
         SendPartyInfo();
@@ -79,5 +91,9 @@ public class FactionParty extends Faction {
                     ServerPlayNetworking.send(sPlayer, PartyInfo.PARTY_INFO_PACKET_ID, partyInfo.getByteBuf());
             }
         }
+    }
+
+    public void SendRemoved(ServerPlayerEntity entity) {
+        ServerPlayNetworking.send(entity, PartyPlayerRemoved.PARTY_PLAYER_REMOVED_PACKET_ID, PacketByteBufs.empty());
     }
 }

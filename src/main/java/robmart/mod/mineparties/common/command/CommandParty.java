@@ -32,7 +32,11 @@ public class CommandParty {
                             .then(CommandManager.argument("player", EntityArgumentType.players())
                                 .executes(ctx -> invite(ctx.getSource(), EntityArgumentType.getPlayer(ctx, "player"))))
                         ).then(CommandManager.literal("leave")
-                                .executes(ctx -> leaveParty(ctx.getSource())))
+                                .executes(ctx -> leaveParty(ctx.getSource()))
+                        ).then(CommandManager.literal("name")
+                                .then(CommandManager.argument("name", MessageArgumentType.message())
+                                        .executes(ctx -> nameParty(ctx.getSource(), MessageArgumentType.getMessage(ctx, "name")))
+                                ))
 
         );
     }
@@ -128,9 +132,29 @@ public class CommandParty {
             if (party.get().getAllMembers().size() < 1) {
                 Targeting.disbandFaction(party.get());
             }
+
+            source.sendFeedback(MutableText.of(new TranslatableTextContent("commands.mineparties.party.left", source.getEntity().getName().getString())), true);
         } catch (Exception e) {
             System.out.println(e);
         }
+
+        return 1;
+    }
+
+    public static int nameParty(ServerCommandSource source, Text name) {
+        AtomicReference<FactionParty> party = new AtomicReference<>();
+        Targeting.getFactionsFromEntity(source.getEntity()).forEach(faction -> {
+            if (faction instanceof FactionParty)
+                party.set((FactionParty) faction);
+        });
+
+        if (party.get() == null) {
+            source.sendError(MutableText.of(new TranslatableTextContent("commands.mineparties.party.noparty")));
+            return 0;
+        }
+
+        party.get().setName(name.getString());
+        source.sendFeedback(MutableText.of(new TranslatableTextContent("commands.mineparties.party.name", name.getString())), true);
 
         return 1;
     }
