@@ -51,7 +51,6 @@ public class PartyScreen extends Screen {
         if (partyNameWidget.getText().equals("") && partyInfo == null) {
             MinecraftClient.getInstance().getNetworkHandler().sendChatCommand("party create");
         } else if (!partyNameWidget.getText().equals("") && partyInfo == null) {
-            System.out.println(partyNameWidget.getText());
             MinecraftClient.getInstance().getNetworkHandler().sendChatCommand("party create " + partyNameWidget.getText());
         }
 
@@ -70,6 +69,14 @@ public class PartyScreen extends Screen {
         }
     }
 
+    public void invitePlayer(){
+       if (!partyNameWidget.getText().equals("") && partyInfo != null) {
+            MinecraftClient.getInstance().getNetworkHandler().sendChatCommand("party invite " + partyNameWidget.getText());
+        }
+
+        partyNameWidget.setText("");
+    }
+
     @Override
     protected void init() {
         partyNameWidget = new TextFieldWidget(this.textRenderer, this.width / 2 - 80, this.height / 2 - 73,
@@ -80,7 +87,7 @@ public class PartyScreen extends Screen {
             if (partyInfo == null) {
                 createParty();
             } else {
-                System.out.println("add"); //TODO
+                invitePlayer();
             }
         });
         partyEditWidget = new TexturedButtonWidget(this.width / 2 + 38, this.height / 2 - 57, 20, 18, 0, 0, 19, EDIT_BUTTON_TEXTURE, (button) -> editName());

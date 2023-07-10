@@ -65,8 +65,6 @@ public class Notification {
     }
 
     public void sendMessage() {
-        System.out.println(getIdentifier().toString());
-
         message.setStyle(message.getStyle().withBold(true).withClickEvent(
                 new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/notification " + getIdentifier().toString())));
 
