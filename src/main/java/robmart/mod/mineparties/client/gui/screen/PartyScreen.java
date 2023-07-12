@@ -3,6 +3,7 @@ package robmart.mod.mineparties.client.gui.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
@@ -17,7 +18,7 @@ import robmart.mod.mineparties.common.networking.PartyInfo;
 
 import java.util.Random;
 
-public class PartyScreen extends Screen {
+public class PartyScreen extends Screen { //TODO: Reduce magic numbers
     private static final Identifier TEXTURE = new Identifier("mineparties:textures/gui/party.png");
     private static final Identifier ADD_BUTTON_TEXTURE = new Identifier("mineparties:textures/gui/plus_button.png");
     private static final Identifier MINUS_BUTTON_TEXTURE = new Identifier("mineparties:textures/gui/minus_button.png");
@@ -82,7 +83,7 @@ public class PartyScreen extends Screen {
     protected void init() {
         partyNameWidget = new TextFieldWidget(this.textRenderer, this.width / 2 - 119, this.height / 2 - 76,
                 108, 15, MutableText.of(new TranslatableTextContent("mineparties.gui.party.name")));
-        partyNameWidget.setPlaceholder(Text.translatable("mineparties.gui.party.name"));
+        partyNameWidget.setPlaceholder(Text.translatable("mineparties.gui.party.toname"));
 
         partyCreateWidget = new TexturedButtonWidget(this.width / 2 + 100, this.height / 2 - 77, 20, 18, 0, 0, 19, ADD_BUTTON_TEXTURE, (button) ->
         {
@@ -92,8 +93,11 @@ public class PartyScreen extends Screen {
                 invitePlayer();
             }
         });
+        partyCreateWidget.setTooltip(Tooltip.of(Text.translatable("mineparties.gui.party.createtooltip")));
         partyEditWidget = new TexturedButtonWidget(this.width / 2 + 78, this.height / 2 - 57, 20, 18, 0, 0, 19, EDIT_BUTTON_TEXTURE, (button) -> editName());
+        partyEditWidget.setTooltip(Tooltip.of(Text.translatable("mineparties.gui.party.renametooltip")));
         partyLeaveWidget = new TexturedButtonWidget(this.width / 2 + 100, this.height / 2 - 77, 20, 18, 0, 0, 19, MINUS_BUTTON_TEXTURE, (button) -> leaveParty());
+        partyLeaveWidget.setTooltip(Tooltip.of(Text.translatable("mineparties.gui.party.leavetooltip")));
 
         membersWidget = new PartyPlayerScrollableWidget(client, this, this.width / 2 - 120, this.height / 2 - 18, 102, 92, Text.empty());
 
@@ -121,12 +125,18 @@ public class PartyScreen extends Screen {
             partyLeaveWidget.active = false;
 
             partyNameWidget.setY(this.height / 2 - 76);
+            partyNameWidget.setPlaceholder(Text.translatable("mineparties.gui.party.toname"));
+
             partyCreateWidget.setY(this.height / 2 - 77);
+            partyCreateWidget.setTooltip(Tooltip.of(Text.translatable("mineparties.gui.party.createtooltip")));
         } else {
             partyLeaveWidget.active = true;
 
             partyNameWidget.setY(this.height / 2 - 55);
+            partyNameWidget.setPlaceholder(Text.translatable("mineparties.gui.party.nameorinvite"));
+
             partyCreateWidget.setY(this.height / 2 - 57);
+            partyCreateWidget.setTooltip(Tooltip.of(Text.translatable("mineparties.gui.party.invitetooltip")));
 
             textRenderer.draw(matrices, partyInfo.Name, this.width / 2 - 120, this.height / 2 - 72, 0);
 

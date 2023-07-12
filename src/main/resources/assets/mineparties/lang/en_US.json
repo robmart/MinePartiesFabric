@@ -17,5 +17,11 @@
 	"_comment": "gui",
 	"mineparties.gui.party.members": "Members:",
 	"mineparties.gui.party.settings": "Settings:",
-	"mineparties.gui.party.name": "Name"
+	"mineparties.gui.party.name": "Name",
+	"mineparties.gui.party.toname": "Party Name",
+	"mineparties.gui.party.nameorinvite": "Party/Player Name",
+	"mineparties.gui.party.createtooltip": "Create new party\nUses text box for name",
+	"mineparties.gui.party.leavetooltip": "Leave the party",
+	"mineparties.gui.party.renametooltip": "Rename the party\nUses text box for name",
+	"mineparties.gui.party.invitetooltip": "Invite Player to party\nUses text box for name"
 }
