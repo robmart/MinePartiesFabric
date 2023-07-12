@@ -80,8 +80,9 @@ public class PartyScreen extends Screen {
 
     @Override
     protected void init() {
-        partyNameWidget = new TextFieldWidget(this.textRenderer, this.width / 2 - 119, this.height / 2 - 73,
+        partyNameWidget = new TextFieldWidget(this.textRenderer, this.width / 2 - 119, this.height / 2 - 76,
                 108, 15, MutableText.of(new TranslatableTextContent("mineparties.gui.party.name")));
+        partyNameWidget.setPlaceholder(Text.translatable("mineparties.gui.party.name"));
 
         partyCreateWidget = new TexturedButtonWidget(this.width / 2 + 100, this.height / 2 - 77, 20, 18, 0, 0, 19, ADD_BUTTON_TEXTURE, (button) ->
         {
@@ -119,7 +120,7 @@ public class PartyScreen extends Screen {
         if (partyInfo == null) {
             partyLeaveWidget.active = false;
 
-            partyNameWidget.setY(this.height / 2 - 75);
+            partyNameWidget.setY(this.height / 2 - 76);
             partyCreateWidget.setY(this.height / 2 - 77);
         } else {
             partyLeaveWidget.active = true;
