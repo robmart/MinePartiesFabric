@@ -30,32 +30,13 @@ public class MinePartiesClient implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (keyBinding.wasPressed()) {
-                client.setScreen(new PartyScreen());
+                client.setScreen(new PartyScreen(client));
             }
         });
 
         ClientPlayNetworking.registerGlobalReceiver(PartyInfo.PARTY_INFO_PACKET_ID, (client, handler, buf, responseSender) -> {
-            String name = buf.readString();
-            boolean hasOldName = buf.readBoolean();
-            String oldName = buf.readString();
-            int size = buf.readInt();
-            List<String> names = new ArrayList<>();
-
-            for (int i = 0; i < size; i++) {
-                String member = buf.readString();
-                names.add(member);
-
-            }
-
-            client.execute(() -> {
-                PartyInfo partyInfo = new PartyInfo(name);
-
-                for (String pName : names) {
-                    partyInfo.add(new PartyInfo.PartyInfoPart(pName));
-                }
-
-                PartyScreen.partyInfo = partyInfo;
-            });
+            PartyInfo info = new PartyInfo(buf);
+            client.execute(() -> PartyScreen.partyInfo = info);
         });
 
         ClientPlayNetworking.registerGlobalReceiver(PartyPlayerRemoved.PARTY_PLAYER_REMOVED_PACKET_ID, (client, handler, buf, responseSender) -> {

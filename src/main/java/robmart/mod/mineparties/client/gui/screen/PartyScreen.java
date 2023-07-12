@@ -3,21 +3,19 @@ package robmart.mod.mineparties.client.gui.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Identifier;
-import robmart.mod.mineparties.api.faction.FactionParty;
+import robmart.mod.mineparties.client.gui.widget.PartyPlayerScrollableWidget;
 import robmart.mod.mineparties.common.networking.PartyInfo;
-import robmart.mod.targetingapifabric.api.Targeting;
-import robmart.mod.targetingapifabric.api.faction.Faction;
+
+import java.util.Random;
 
 public class PartyScreen extends Screen {
     private static final Identifier TEXTURE = new Identifier("mineparties:textures/gui/party.png");
@@ -25,19 +23,22 @@ public class PartyScreen extends Screen {
     private static final Identifier MINUS_BUTTON_TEXTURE = new Identifier("mineparties:textures/gui/minus_button.png");
     private static final Identifier EDIT_BUTTON_TEXTURE = new Identifier("mineparties:textures/gui/edit_button.png");
     private static final int TEXTURE_HEIGHT = 166;
-    private static final int TEXTURE_WIDTH = 176;
+    private static final int TEXTURE_WIDTH = 256;
 
     public static PartyInfo partyInfo;
 
+    private MinecraftClient client;
     private TextFieldWidget partyNameWidget;
     private TexturedButtonWidget partyCreateWidget;
     private TexturedButtonWidget partyLeaveWidget;
     private TexturedButtonWidget partyEditWidget;
+    private ScrollableWidget membersWidget;
 
     private int counter = 0;
 
-    public PartyScreen() {
+    public PartyScreen(MinecraftClient client) {
         super(Text.of("Party"));
+        this.client = client;
     }
 
 //    public void loadParty() {
@@ -79,10 +80,10 @@ public class PartyScreen extends Screen {
 
     @Override
     protected void init() {
-        partyNameWidget = new TextFieldWidget(this.textRenderer, this.width / 2 - 80, this.height / 2 - 73,
-                TEXTURE_WIDTH / 2 - 10, 15, MutableText.of(new TranslatableTextContent("mineparties.gui.party.name")));
+        partyNameWidget = new TextFieldWidget(this.textRenderer, this.width / 2 - 119, this.height / 2 - 73,
+                108, 15, MutableText.of(new TranslatableTextContent("mineparties.gui.party.name")));
 
-        partyCreateWidget = new TexturedButtonWidget(this.width / 2 + 60, this.height / 2 - 77, 20, 18, 0, 0, 19, ADD_BUTTON_TEXTURE, (button) ->
+        partyCreateWidget = new TexturedButtonWidget(this.width / 2 + 100, this.height / 2 - 77, 20, 18, 0, 0, 19, ADD_BUTTON_TEXTURE, (button) ->
         {
             if (partyInfo == null) {
                 createParty();
@@ -90,14 +91,23 @@ public class PartyScreen extends Screen {
                 invitePlayer();
             }
         });
-        partyEditWidget = new TexturedButtonWidget(this.width / 2 + 38, this.height / 2 - 57, 20, 18, 0, 0, 19, EDIT_BUTTON_TEXTURE, (button) -> editName());
-        partyLeaveWidget = new TexturedButtonWidget(this.width / 2 + 60, this.height / 2 - 77, 20, 18, 0, 0, 19, MINUS_BUTTON_TEXTURE, (button) -> leaveParty());
+        partyEditWidget = new TexturedButtonWidget(this.width / 2 + 78, this.height / 2 - 57, 20, 18, 0, 0, 19, EDIT_BUTTON_TEXTURE, (button) -> editName());
+        partyLeaveWidget = new TexturedButtonWidget(this.width / 2 + 100, this.height / 2 - 77, 20, 18, 0, 0, 19, MINUS_BUTTON_TEXTURE, (button) -> leaveParty());
+
+        membersWidget = new PartyPlayerScrollableWidget(client, this, this.width / 2 - 120, this.height / 2 - 18, 102, 92, Text.empty());
 
         addSelectableChild(partyNameWidget);
 
         addSelectableChild(partyCreateWidget);
         addSelectableChild(partyEditWidget);
         addSelectableChild(partyLeaveWidget);
+
+        addSelectableChild(membersWidget);
+
+        Random random = new Random();
+
+//        while (partyInfo != null && partyInfo.partyInfoParts.size() < 15)
+//            partyInfo.partyInfoParts.add(new PartyInfo.PartyInfoPart("Test" + random.nextInt(1000)));
     }
 
     @Override
@@ -117,7 +127,7 @@ public class PartyScreen extends Screen {
             partyNameWidget.setY(this.height / 2 - 55);
             partyCreateWidget.setY(this.height / 2 - 57);
 
-            textRenderer.draw(matrices, partyInfo.Name, this.width / 2 - 78, this.height / 2 - 72, 0);
+            textRenderer.draw(matrices, partyInfo.Name, this.width / 2 - 120, this.height / 2 - 72, 0);
 
             partyEditWidget.render(matrices, mouseX, mouseY, delta);
             partyLeaveWidget.render(matrices, mouseX, mouseY, delta);
@@ -125,8 +135,10 @@ public class PartyScreen extends Screen {
 
         partyCreateWidget.render(matrices, mouseX, mouseY, delta);
 
-        textRenderer.draw(matrices, MutableText.of(new TranslatableTextContent("mineparties.gui.party.members")), this.width / 2 - 78, this.height / 2 - 30, 0);
-        textRenderer.draw(matrices, MutableText.of(new TranslatableTextContent("mineparties.gui.party.settings")), this.width / 2 + 3, this.height / 2 - 30, 0);
+        textRenderer.draw(matrices, MutableText.of(new TranslatableTextContent("mineparties.gui.party.members")), this.width / 2 - 120, this.height / 2 - 30, 0);
+        textRenderer.draw(matrices, MutableText.of(new TranslatableTextContent("mineparties.gui.party.settings")), this.width / 2 + 10, this.height / 2 - 30, 0);
+
+        membersWidget.render(matrices, mouseX, mouseY, delta);
     }
 
     @Override
@@ -144,5 +156,17 @@ public class PartyScreen extends Screen {
     @Override
     public boolean shouldPause() {
         return false;
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (super.keyPressed(keyCode, scanCode, modifiers)) {
+            return true;
+        }
+        if (this.client.options.inventoryKey.matchesKey(keyCode, scanCode) && !partyNameWidget.isFocused()) {
+            this.close();
+            return true;
+        }
+        return true;
     }
 }

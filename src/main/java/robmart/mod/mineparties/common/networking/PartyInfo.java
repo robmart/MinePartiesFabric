@@ -23,12 +23,23 @@ public class PartyInfo {
         OldName = oldName;
     }
 
+    public PartyInfo(PacketByteBuf buf) {
+        Name = buf.readString();
+        boolean hasOldName = buf.readBoolean();
+        OldName = buf.readString();
+        int size = buf.readInt();
+
+        for (int i = 0; i < size; i++) {
+            partyInfoParts.add(new PartyInfoPart(buf.readString()));
+        }
+    }
+
     public PartyInfo add(PartyInfoPart part) {
         partyInfoParts.add(part);
         return this;
     }
 
-    public PacketByteBuf getByteBuf() {
+    public PacketByteBuf write() {
         PacketByteBuf buf = PacketByteBufs.create();
         boolean hasOldName = this.OldName != null && !this.OldName.equals("");
 

@@ -4,8 +4,6 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.TranslatableTextContent;
@@ -88,7 +86,7 @@ public class FactionParty extends Faction {
         if (!partyInfo.partyInfoParts.isEmpty()) {
             for (PlayerEntity player : getAllPlayers()) {
                 if (player instanceof ServerPlayerEntity sPlayer)
-                    ServerPlayNetworking.send(sPlayer, PartyInfo.PARTY_INFO_PACKET_ID, partyInfo.getByteBuf());
+                    ServerPlayNetworking.send(sPlayer, PartyInfo.PARTY_INFO_PACKET_ID, partyInfo.write());
             }
         }
     }
