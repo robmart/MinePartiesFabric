@@ -7,6 +7,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.TranslatableTextContent;
+import org.apache.logging.log4j.core.filter.RegexFilter;
 import robmart.mod.mineparties.common.networking.PartyInfo;
 import robmart.mod.mineparties.common.networking.PartyPlayerRemoved;
 import robmart.mod.targetingapifabric.api.faction.Faction;
@@ -23,6 +24,8 @@ public class FactionParty extends Faction {
 
     @Override
     public boolean setName(String name) {
+        if (!name.matches(".*\\w.*")) return false;
+
         oldName = getName();
         boolean result = super.setName(name);
 

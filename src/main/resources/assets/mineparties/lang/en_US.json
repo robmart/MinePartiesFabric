@@ -10,7 +10,7 @@
 	"commands.mineparties.party.joined": "%s has joined the party",
 	"commands.mineparties.party.left": "%s has left the party",
 	"commands.mineparties.party.name": "Party name has been set to %s",
-	"commands.mineparties.party.invalidname": "That name has already been taken",
+	"commands.mineparties.party.invalidname": "That name was already taken or invalid",
 
 	"commands.mineparties.notification.usage": "/notification <uuid>",
 	"commands.mineparties.notification.notexist": "That notification does not exist",
