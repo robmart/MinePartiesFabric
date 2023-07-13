@@ -22,11 +22,13 @@ public class FactionParty extends Faction {
     }
 
     @Override
-    public void setName(String name) {
+    public boolean setName(String name) {
         oldName = getName();
-        super.setName(name);
+        boolean result = super.setName(name);
 
         SendPartyInfo();
+
+        return result;
     }
 
     @Override

@@ -50,8 +50,12 @@ public class CommandParty {
         }
 
         FactionParty party = new FactionParty(String.format("%s's Party", source.getName()));
-        party.addMemberEntity(source.getEntity());
-        Targeting.registerFaction(party);
+        if (Targeting.registerFaction(party))
+            party.addMemberEntity(source.getEntity());
+        else {
+            source.sendError(MutableText.of(new TranslatableTextContent("commands.mineparties.party.invalidname")));
+            return 0;
+        }
 
         source.sendFeedback(MutableText.of(new TranslatableTextContent("commands.mineparties.party.success1", party.getName())), true);
         return 1;
@@ -66,8 +70,12 @@ public class CommandParty {
         }
 
         FactionParty party = new FactionParty(name.getString());
-        party.addMemberEntity(source.getEntity());
-        Targeting.registerFaction(party);
+        if (Targeting.registerFaction(party))
+            party.addMemberEntity(source.getEntity());
+        else {
+            source.sendError(MutableText.of(new TranslatableTextContent("commands.mineparties.party.invalidname")));
+            return 0;
+        }
 
         source.sendFeedback(MutableText.of(new TranslatableTextContent("commands.mineparties.party.success1", party.getName())), true);
         return 1;
@@ -153,7 +161,11 @@ public class CommandParty {
             return 0;
         }
 
-        party.get().setName(name.getString());
+        if (!party.get().setName(name.getString())) {
+            source.sendError(MutableText.of(new TranslatableTextContent("commands.mineparties.party.invalidname")));
+            return 0;
+        }
+
         source.sendFeedback(MutableText.of(new TranslatableTextContent("commands.mineparties.party.name", name.getString())), true);
 
         return 1;

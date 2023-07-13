@@ -42,13 +42,6 @@ public class PartyScreen extends Screen { //TODO: Reduce magic numbers
         this.client = client;
     }
 
-//    public void loadParty() {
-//        if (partyInfo != null)
-//            for (PartyInfo.PartyInfoPart infoPart : partyInfo.partyInfoParts) {
-//                System.out.println(infoPart.playerId);
-//            }
-//    }
-
     public void createParty(){
         if (partyNameWidget.getText().equals("") && partyInfo == null) {
             MinecraftClient.getInstance().getNetworkHandler().sendChatCommand("party create");
