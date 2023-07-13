@@ -20,7 +20,8 @@
     ]
   },
   "mixins": [
-    "mineparties.mixins.json"
+    "mineparties.mixins.json",
+    "mineparties.client.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.14.14",

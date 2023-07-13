@@ -9,13 +9,11 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
+import robmart.mod.mineparties.api.client.event.ClientStatusEvents;
 import robmart.mod.mineparties.api.reference.Reference;
 import robmart.mod.mineparties.client.gui.screen.PartyScreen;
 import robmart.mod.mineparties.common.networking.PartyInfo;
 import robmart.mod.mineparties.common.networking.PartyPlayerRemoved;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class MinePartiesClient implements ClientModInitializer {
@@ -42,5 +40,7 @@ public class MinePartiesClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(PartyPlayerRemoved.PARTY_PLAYER_REMOVED_PACKET_ID, (client, handler, buf, responseSender) -> {
             PartyScreen.partyInfo = null;
         });
+
+        ClientStatusEvents.DISCONNECT_CLIENT_EVENT.register((client) -> PartyScreen.partyInfo = null);
     }
 }
