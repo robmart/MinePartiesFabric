@@ -22,7 +22,7 @@ public class PartyPlayerScrollableWidget extends ScrollableWidget {
     @Override
     protected int getContentsHeight() {
         if (PartyScreen.party == null) return 0;
-        return PartyScreen.party.getAllPlayers().size() * (client.textRenderer.fontHeight + 1);
+        return (PartyScreen.party.getAllPlayers().size() + 1) * (client.textRenderer.fontHeight + 1);
     }
 
     @Override
