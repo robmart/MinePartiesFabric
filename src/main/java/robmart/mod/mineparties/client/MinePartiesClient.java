@@ -9,11 +9,8 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
-import robmart.mod.mineparties.api.client.event.ClientStatusEvents;
 import robmart.mod.mineparties.api.reference.Reference;
 import robmart.mod.mineparties.client.gui.screen.PartyScreen;
-import robmart.mod.mineparties.common.networking.PartyInfo;
-import robmart.mod.mineparties.common.networking.PartyPlayerRemoved;
 
 @Environment(EnvType.CLIENT)
 public class MinePartiesClient implements ClientModInitializer {
@@ -31,16 +28,5 @@ public class MinePartiesClient implements ClientModInitializer {
                 client.setScreen(new PartyScreen(client));
             }
         });
-
-        ClientPlayNetworking.registerGlobalReceiver(PartyInfo.PARTY_INFO_PACKET_ID, (client, handler, buf, responseSender) -> {
-            PartyInfo info = new PartyInfo(buf);
-            client.execute(() -> PartyScreen.partyInfo = info);
-        });
-
-        ClientPlayNetworking.registerGlobalReceiver(PartyPlayerRemoved.PARTY_PLAYER_REMOVED_PACKET_ID, (client, handler, buf, responseSender) -> {
-            PartyScreen.partyInfo = null;
-        });
-
-        ClientStatusEvents.DISCONNECT_CLIENT_EVENT.register((client) -> PartyScreen.partyInfo = null);
     }
 }

@@ -85,9 +85,9 @@ public class CommandParty {
         AtomicInteger returnint = new AtomicInteger();
         Targeting.getFactionsFromEntity(source.getEntity()).forEach(faction -> {
             if (faction instanceof FactionParty) {
-                faction.getAllMembers().forEach(obj -> {
-                    if (obj instanceof PlayerEntity)
-                        source.sendFeedback(((PlayerEntity) obj).getName(), false);
+                faction.getAllMembers().forEach((obj, isPlayer) -> {
+                    if (isPlayer)
+                        source.sendFeedback(Text.of(obj.toString()), false);
                 });
                 returnint.set(1);
             }

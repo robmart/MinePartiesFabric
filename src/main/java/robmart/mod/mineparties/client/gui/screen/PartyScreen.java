@@ -13,8 +13,12 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Identifier;
+import robmart.mod.mineparties.api.faction.FactionParty;
 import robmart.mod.mineparties.client.gui.widget.PartyPlayerScrollableWidget;
-import robmart.mod.mineparties.common.networking.PartyInfo;
+import robmart.mod.targetingapifabric.api.Targeting;
+import robmart.mod.targetingapifabric.api.TargetingClient;
+import robmart.mod.targetingapifabric.api.faction.Faction;
+import robmart.mod.targetingapifabric.api.faction.manager.FactionManager;
 
 import java.util.Random;
 
@@ -26,7 +30,7 @@ public class PartyScreen extends Screen { //TODO: Reduce magic numbers
     private static final int TEXTURE_HEIGHT = 166;
     private static final int TEXTURE_WIDTH = 256;
 
-    public static PartyInfo partyInfo;
+    public static FactionParty party;
 
     private MinecraftClient client;
     private TextFieldWidget partyNameWidget;
@@ -42,31 +46,45 @@ public class PartyScreen extends Screen { //TODO: Reduce magic numbers
         this.client = client;
     }
 
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (party == null) {
+            for (Faction faction : TargetingClient.getFactionsFromEntity(client.player)) {
+                if (faction instanceof FactionParty party)
+                    PartyScreen.party = party;
+            }
+        } else if (!TargetingClient.getFactionList().contains(PartyScreen.party) || !PartyScreen.party.isMember(client.player)) {
+            party = null;
+        }
+    }
+
     public void createParty(){
-        if (partyNameWidget.getText().equals("") && partyInfo == null) {
-            MinecraftClient.getInstance().getNetworkHandler().sendChatCommand("party create");
-        } else if (!partyNameWidget.getText().equals("") && partyInfo == null) {
-            MinecraftClient.getInstance().getNetworkHandler().sendChatCommand("party create " + partyNameWidget.getText());
+        if (partyNameWidget.getText().equals("") && party == null) {
+            this.client.getNetworkHandler().sendChatCommand("party create");
+        } else if (!partyNameWidget.getText().equals("") && party == null) {
+            this.client.getNetworkHandler().sendChatCommand("party create " + partyNameWidget.getText());
         }
 
         partyNameWidget.setText("");
     }
 
     public void leaveParty(){
-        MinecraftClient.getInstance().getNetworkHandler().sendChatCommand("party leave");
-        partyInfo = null;
+        this.client.getNetworkHandler().sendChatCommand("party leave");
+        party = null;
     }
 
     public void editName(){
         if (!partyNameWidget.getText().equals("")) {
-            MinecraftClient.getInstance().getNetworkHandler().sendChatCommand("party name " + partyNameWidget.getText());
+            this.client.getNetworkHandler().sendChatCommand("party name " + partyNameWidget.getText());
             partyNameWidget.setText("");
         }
     }
 
     public void invitePlayer(){
-       if (!partyNameWidget.getText().equals("") && partyInfo != null) {
-            MinecraftClient.getInstance().getNetworkHandler().sendChatCommand("party invite " + partyNameWidget.getText());
+       if (!partyNameWidget.getText().equals("") && party != null) {
+            this.client.getNetworkHandler().sendChatCommand("party invite " + partyNameWidget.getText());
         }
 
         partyNameWidget.setText("");
@@ -80,7 +98,7 @@ public class PartyScreen extends Screen { //TODO: Reduce magic numbers
 
         partyCreateWidget = new TexturedButtonWidget(this.width / 2 + 100, this.height / 2 - 77, 20, 18, 0, 0, 19, ADD_BUTTON_TEXTURE, (button) ->
         {
-            if (partyInfo == null) {
+            if (party == null) {
                 createParty();
             } else {
                 invitePlayer();
@@ -114,7 +132,7 @@ public class PartyScreen extends Screen { //TODO: Reduce magic numbers
 
         partyNameWidget.render(matrices, mouseX, mouseY, delta);
 
-        if (partyInfo == null) {
+        if (party == null) {
             partyLeaveWidget.active = false;
 
             partyNameWidget.setY(this.height / 2 - 76);
@@ -131,7 +149,7 @@ public class PartyScreen extends Screen { //TODO: Reduce magic numbers
             partyCreateWidget.setY(this.height / 2 - 57);
             partyCreateWidget.setTooltip(Tooltip.of(Text.translatable("mineparties.gui.party.invitetooltip")));
 
-            textRenderer.draw(matrices, partyInfo.Name, this.width / 2 - 120, this.height / 2 - 72, 0);
+            textRenderer.draw(matrices, party.getName(), this.width / 2 - 120, this.height / 2 - 72, 0);
 
             partyEditWidget.render(matrices, mouseX, mouseY, delta);
             partyLeaveWidget.render(matrices, mouseX, mouseY, delta);
