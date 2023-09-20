@@ -7,6 +7,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.TranslatableTextContent;
+import robmart.mod.mineparties.common.helper.DataHelper;
 import robmart.mod.targetingapifabric.api.faction.Faction;
 
 import java.util.ArrayList;
@@ -37,12 +38,12 @@ public class FactionParty extends Faction {
     public void addMemberEntity(Entity entityToAdd) {
         super.addMemberEntity(entityToAdd);
 
-//        if (entityToAdd instanceof PlayerEntity) {
-//            for (Object member : getAllMembers()) { //TODO: Fix
-//                if (member instanceof PlayerEntity player)
-//                    player.sendMessage(MutableText.of(new TranslatableTextContent("commands.mineparties.party.joined", entityToAdd.getName())), false);
-//            }
-//        }
+        if (this.isServerSide() && entityToAdd instanceof PlayerEntity) {
+            for (String member : getAllPlayers()) { 
+
+                DataHelper.playerFromUsername(member).sendMessage(MutableText.of(new TranslatableTextContent("commands.mineparties.party.joined", entityToAdd.getName())), false);
+            }
+        }
     }
 
     public List<String> getAllPlayers() {
