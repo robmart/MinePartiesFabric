@@ -1,10 +1,7 @@
 package robmart.mod.mineparties.api.faction;
 
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.TranslatableTextContent;
 import robmart.mod.mineparties.common.helper.DataHelper;
@@ -39,7 +36,7 @@ public class FactionParty extends Faction {
         super.addMemberEntity(entityToAdd);
 
         if (this.isServerSide() && entityToAdd instanceof PlayerEntity) {
-            for (String member : getAllPlayers()) { 
+            for (String member : getAllPlayers()) {
 
                 DataHelper.playerFromUsername(member).sendMessage(MutableText.of(new TranslatableTextContent("commands.mineparties.party.joined", entityToAdd.getName())), false);
             }

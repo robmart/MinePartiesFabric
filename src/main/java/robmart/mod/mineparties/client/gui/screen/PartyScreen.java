@@ -3,6 +3,7 @@ package robmart.mod.mineparties.client.gui.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
